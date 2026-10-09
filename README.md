@@ -19,6 +19,7 @@ no ads, no tracking. Progress is stored on the device in localStorage.
 | `index.html` | Home screen — lists the days, shows stars earned |
 | `day01_game.html` | Day 1: order of operations, compensation, splitting |
 | `day02_game.html` | Day 2: place value, estimation, pairing |
+| `day03_game.html` | Day 3: ×11, squares ending in 5, mirror pairs, distributive law |
 | `sw.js` | Service worker — offline caching |
 | `manifest.webmanifest` | Web app manifest — icon, name, standalone display |
 | `icon-*.png`, `apple-touch-icon.png` | App icons |

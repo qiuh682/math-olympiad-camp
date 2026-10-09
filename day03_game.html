@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Math Olympiad Camp · Day 3</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Math Camp">
+<meta name="theme-color" content="#0f1420">
+<meta name="format-detection" content="telephone=no">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+html{font-size:18px}  /* runtime zoom overrides this */
+:root{
+  --bg:#0f1420; --panel:#182134; --panel2:#1f2b42; --line:#2c3a56;
+  --ink:#e8edf7; --dim:#9fb0cc; --accent:#4cc3a5; --accent2:#5aa9f0;
+  --warn:#f0a35a; --bad:#ef6f6f; --gold:#f5cc4d; --purple:#a98bdc;
+  --r:14px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);overflow-x:hidden;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+  line-height:1.6;-webkit-font-smoothing:antialiased}
+canvas#fx{position:fixed;inset:0;pointer-events:none;z-index:60}
+.wrap{max-width:min(96vw,49rem);margin:0 auto;padding:1rem}
+header{position:sticky;top:0;z-index:20;background:rgba(15,20,32,.94);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line)}
+.hbar{max-width:min(96vw,49rem);margin:0 auto;padding:.5rem 1rem;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.logo{font-weight:700;font-size:1rem}
+.logo small{display:block;font-weight:400;font-size:0.6875rem;color:var(--dim);letter-spacing:.5px}
+.rank{font-size:0.75rem;padding:3px 10px;border-radius:99px;border:1px solid var(--gold);color:var(--gold)}
+.stats{margin-left:auto;display:flex;gap:14px;align-items:center;font-size:0.8125rem}
+.stat b{font-size:1rem;color:var(--gold)}
+.mute{padding:.3rem .55rem;font-size:.78rem}
+.zlab{font-size:.72rem;color:var(--dim);min-width:2.6rem;text-align:center;font-variant-numeric:tabular-nums}
+.xpwrap{width:100%;height:5px;background:var(--panel2);border-radius:99px;overflow:hidden}
+.xpbar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .5s}
+h1{font-size:1.375rem;margin:20px 0 4px}
+h2{font-size:1.125rem;margin:24px 0 8px}
+h3{font-size:0.9375rem;margin:16px 0 6px;color:var(--accent)}
+p{margin:8px 0}
+.sub{color:var(--dim);font-size:0.8125rem;margin-top:0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;margin:12px 0}
+.card.quiet{background:var(--panel2)}
+.grid{display:grid;gap:.7rem;grid-template-columns:repeat(auto-fill,minmax(12rem,1fr))}
+.lvl{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:15px;cursor:pointer;
+  transition:transform .12s,border-color .2s;position:relative}
+.lvl:hover{transform:translateY(-2px);border-color:var(--accent)}
+.lvl.locked{opacity:.4;cursor:not-allowed}.lvl.locked:hover{transform:none;border-color:var(--line)}
+.lvl.game{border-color:#3a3156;background:linear-gradient(160deg,#1d1b33,#182134)}
+.lvl.game:hover{border-color:var(--purple)}
+.lvl .ico{font-size:1.5625rem}.lvl .nm{font-weight:650;margin-top:5px}
+.lvl .en{font-size:0.6875rem;color:var(--dim);letter-spacing:.4px;text-transform:uppercase}
+.lvl .st{margin-top:8px;font-size:0.875rem;letter-spacing:2px;color:var(--gold)}
+.lvl .tag{position:absolute;top:11px;right:12px;font-size:0.6875rem;color:var(--dim)}
+button{font:inherit;cursor:pointer;border-radius:10px;border:1px solid var(--line);
+  background:var(--panel2);color:var(--ink);padding:.5rem .85rem;transition:.15s}
+button:hover{border-color:var(--accent)}
+button.primary{background:var(--accent);color:#06241c;border-color:var(--accent);font-weight:650}
+button.primary:hover{filter:brightness(1.08)}
+button.ghost{background:transparent}
+button:disabled{opacity:.4;cursor:default}
+.row{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin-top:13px}
+.q{font-size:1.875rem;font-weight:600;letter-spacing:1px;margin:10px 0 2px;font-variant-numeric:tabular-nums}
+.q.word{font-size:1.1875rem;font-weight:500;letter-spacing:0;line-height:1.5}
+.qsub{color:var(--dim);font-size:0.8125rem}
+input[type=text]{font:inherit;font-size:1.3125rem;padding:.55rem .8rem;border-radius:10px;width:9.5rem;
+  border:1px solid var(--line);background:#0c111c;color:var(--ink);text-align:center;font-variant-numeric:tabular-nums}
+input#expr{width:100%;max-width:26rem;text-align:left;letter-spacing:1px}
+input[type=text]:focus{outline:none;border-color:var(--accent2)}
+.pbar{height:5px;background:var(--panel2);border-radius:99px;overflow:hidden;margin:13px 0 4px}
+.pbar i{display:block;height:100%;background:var(--accent2);width:0;transition:width .3s}
+.fb{margin-top:13px;padding:13px 15px;border-radius:12px;font-size:0.875rem;display:none}
+.fb.ok{display:block;background:rgba(76,195,165,.13);border:1px solid rgba(76,195,165,.4)}
+.fb.no{display:block;background:rgba(239,111,111,.12);border:1px solid rgba(239,111,111,.4)}
+.fb ol{margin:8px 0 0 18px;padding:0}.fb li{margin:3px 0}
+.combo{font-size:0.8125rem;color:var(--warn)}
+.opts{display:grid;gap:.5rem;grid-template-columns:repeat(auto-fit,minmax(7rem,1fr));margin-top:.8rem}
+.opt{padding:13px;text-align:center;font-size:1.1875rem;font-variant-numeric:tabular-nums}
+.hl{color:var(--gold);font-weight:650}
+.mono{font-variant-numeric:tabular-nums;letter-spacing:.5px}
+table{width:100%;border-collapse:collapse;font-size:0.875rem;margin-top:10px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
+th{color:var(--dim);font-weight:500;font-size:0.75rem;text-transform:uppercase;letter-spacing:.5px}
+.badge{display:inline-block;padding:3px 10px;border-radius:99px;font-size:0.75rem;
+  background:var(--panel2);border:1px solid var(--line);margin:3px 4px 3px 0}
+.badge.got{background:rgba(245,204,77,.15);border-color:var(--gold);color:var(--gold)}
+.toast{position:fixed;left:50%;top:66px;transform:translateX(-50%) translateY(-16px);
+  background:var(--accent);color:#06241c;font-weight:650;padding:10px 20px;border-radius:99px;
+  opacity:0;transition:.3s;pointer-events:none;z-index:70}
+.toast.show{opacity:1;transform:translateX(-50%)}
+@keyframes shake{0%,100%{transform:none}20%{transform:translateX(-7px)}40%{transform:translateX(6px)}
+  60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+.shake{animation:shake .35s}
+@keyframes pop{from{transform:scale(.85);opacity:0}to{transform:none;opacity:1}}
+.pop{animation:pop .22s}
+/* boss */
+.boss{text-align:center;padding:6px 0 2px}
+.bossface{font-size:3.875rem;line-height:1.1;display:inline-block}
+.hpwrap{height:16px;background:#2a1520;border:1px solid var(--line);border-radius:99px;overflow:hidden;margin:8px 0 4px}
+.hp{height:100%;background:linear-gradient(90deg,#ef6f6f,#f0a35a);transition:width .45s;width:100%}
+.hearts{font-size:1.1875rem;letter-spacing:3px}
+/* duel */
+.duel{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;text-align:center;margin:6px 0 2px}
+.duel .who{font-size:1.875rem}.duel .sc{font-size:1.625rem;font-weight:700;color:var(--gold)}
+.buzz{height:7px;background:var(--panel2);border-radius:99px;overflow:hidden;margin-top:8px}
+.buzz i{display:block;height:100%;width:100%;background:var(--bad);transition:width .1s linear}
+/* forge */
+.hand{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0 4px}
+.pcard{width:3.45rem;height:4.7rem;border-radius:10px;background:linear-gradient(160deg,#27354f,#1b2740);border:1px solid var(--line);
+  display:flex;align-items:center;justify-content:center;font-size:1.6875rem;font-weight:700;
+  font-variant-numeric:tabular-nums;color:var(--gold)}
+.keys{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.keys button{min-width:2.6rem;padding:.55rem .7rem;font-size:1.0625rem}
+/* trick cards */
+.tcard{border-radius:14px;padding:15px 17px;border:1px solid var(--line);background:var(--panel);margin:10px 0}
+.tcard.locked{opacity:.45}
+.tcard h4{margin:0 0 4px;font-size:1rem;color:var(--gold)}
+.tcard .eg{font-variant-numeric:tabular-nums;color:var(--accent);margin-top:6px}
+footer{color:var(--dim);font-size:0.75rem;text-align:center;padding:28px 16px 50px}
+
+/* ---------- touch / iPad ---------- */
+button,.lvl,.opt{touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+  -webkit-user-select:none;user-select:none}
+button{min-height:2.6rem}
+body{padding-bottom:env(safe-area-inset-bottom);-webkit-text-size-adjust:100%}
+body.padon{padding-bottom:16rem}
+.pad{position:fixed;left:0;right:0;bottom:0;z-index:55;display:none;
+  grid-template-columns:repeat(3,1fr);gap:.4rem;
+  padding:.5rem .5rem calc(.5rem + env(safe-area-inset-bottom));
+  background:rgba(24,33,52,.97);border-top:1px solid var(--line);backdrop-filter:blur(10px)}
+.pad.show{display:grid}
+.pad button{font-size:1.5rem;padding:.6rem;min-height:3.1rem;font-variant-numeric:tabular-nums}
+.pad button.go{grid-column:1 / -1;background:var(--accent);color:#06241c;font-weight:650;font-size:1.1rem}
+@media (display-mode:standalone){header{padding-top:env(safe-area-inset-top)}}
+@media print{header,button,.lvl,canvas{display:none!important} body{background:#fff;color:#000}
+  .card{border-color:#ccc;background:#fff}}
+</style>
+</head>
+<body>
+<canvas id="fx"></canvas>
+<header>
+  <div class="hbar">
+    <div class="logo">Math Olympiad Camp<small>DAY 3 · OCT 14, 2026</small></div>
+    <span class="rank" id="sRank">Bronze</span>
+    <div class="stats">
+      <div class="stat">⭐ <b id="sStar">0</b></div>
+      <div class="stat">XP <b id="sXp">0</b></div>
+      <div class="stat">🔥 <b id="sCombo">0</b></div>
+      <a href="index.html" class="mute" style="text-decoration:none;display:inline-block;line-height:1.6">🏠</a>
+      <button class="mute" id="padbtn" onclick="togglePad()">⌨︎ Pad</button>
+      <button class="mute" onclick="zoom(-2)" title="Smaller text">A−</button>
+      <span class="zlab" id="zlab">100%</span>
+      <button class="mute" onclick="zoom(2)" title="Bigger text">A+</button>
+      <button class="mute" onclick="fitScreen()" title="Fit the text to this screen">⤢ Fit</button>
+      <button class="mute" id="mute" onclick="toggleMute()">🔊</button>
+    </div>
+    <div class="xpwrap"><div class="xpbar" id="xpbar"></div></div>
+  </div>
+</header>
+<div class="toast" id="toast"></div>
+<div class="wrap" id="app"></div>
+<footer>One hour a day · 10 min warm-up · 20 min learn · 25 min practice · 5 min summary · progress saves on this device</footer>
+
+<script>
+/* ===================== STATE ===================== */
+const KEY='mathcamp_day3_v1';
+const S=Object.assign({xp:0,stars:{},pass:{},best:0,wrong:[],seen:0,right:0,
+  forge:0,duelW:0,bossWin:0,mute:false,fs:18},JSON.parse(localStorage.getItem(KEY)||'{}'));
+let combo=0;
+const RANKS=[[0,'Bronze'],[250,'Silver'],[600,'Gold'],[1100,'Platinum'],[1800,'Olympian']];
+function rankOf(xp){let r='Bronze';RANKS.forEach(([t,n])=>{if(xp>=t)r=n});return r}
+function save(){localStorage.setItem(KEY,JSON.stringify(S))}
+function hud(){
+  sStar.textContent=Object.values(S.stars).reduce((a,b)=>a+b,0);
+  sXp.textContent=S.xp; sCombo.textContent=combo; sRank.textContent=rankOf(S.xp);
+  const i=RANKS.findIndex(r=>r[1]===rankOf(S.xp)), lo=RANKS[i][0], hi=i+1<RANKS.length?RANKS[i+1][0]:lo+600;
+  xpbar.style.width=Math.min(100,(S.xp-lo)/(hi-lo)*100)+'%';
+  mute.textContent=S.mute?'🔇':'🔊';
+}
+function toggleMute(){S.mute=!S.mute;save();hud()}
+/* ---- text zoom: one root value scales every rem on the page ---- */
+const FSMIN=14,FSMAX=34,FSDEF=18;
+function applyFs(){
+  S.fs=Math.min(FSMAX,Math.max(FSMIN,S.fs||FSDEF));
+  document.documentElement.style.fontSize=S.fs+'px';
+  const z=document.getElementById('zlab'); if(z)z.textContent=Math.round(S.fs/FSDEF*100)+'%';
+}
+function zoom(d){S.fs=(S.fs||FSDEF)+d;save();applyFs();}
+function fitScreen(){ // make the content column fill the window width
+  S.fs=Math.round(Math.min(FSMAX,Math.max(FSMIN,innerWidth/51)));
+  save();applyFs();toastMsg('Text fitted to this screen');
+}
+addEventListener('resize',()=>{const z=document.getElementById('zlab');if(z)applyFs()});
+function toastMsg(t){const e=document.getElementById('toast');e.textContent=t;e.classList.add('show');
+  setTimeout(()=>e.classList.remove('show'),1500)}
+
+/* ===================== JUICE: sound + confetti ===================== */
+let AC=null;
+function tone(f,dur=.12,type='sine',vol=.18,delay=0){
+  if(S.mute)return; try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();}catch(e){return}
+  const t0=AC.currentTime+delay, o=AC.createOscillator(), g=AC.createGain();
+  o.type=type; o.frequency.value=f; g.gain.setValueAtTime(0,t0);
+  g.gain.linearRampToValueAtTime(vol,t0+.012);
+  g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
+  o.connect(g).connect(AC.destination); o.start(t0); o.stop(t0+dur+.03);
+}
+const SFX={
+  ok(c){const base=523.25*Math.pow(1.0595,Math.min(c,12)); tone(base,.1,'triangle',.16); tone(base*1.5,.14,'triangle',.12,.07)},
+  no(){tone(150,.16,'square',.12); tone(110,.2,'square',.1,.08)},
+  hit(){tone(220,.07,'sawtooth',.14); tone(140,.14,'square',.1,.05)},
+  win(){[523,659,784,1047].forEach((f,i)=>tone(f,.18,'triangle',.16,i*.09))},
+  lose(){[392,330,262].forEach((f,i)=>tone(f,.22,'sine',.14,i*.12))},
+  buzz(){tone(880,.07,'square',.14); tone(660,.09,'square',.12,.06)}
+};
+const fx=document.getElementById('fx'), ctx=fx.getContext('2d');
+let parts=[];
+function sizeFx(){fx.width=innerWidth;fx.height=innerHeight} sizeFx(); addEventListener('resize',sizeFx);
+function burst(n=70,x=innerWidth/2,y=innerHeight/3){
+  const cols=['#4cc3a5','#5aa9f0','#f5cc4d','#a98bdc','#f0a35a'];
+  for(let i=0;i<n;i++)parts.push({x,y,vx:(Math.random()-.5)*11,vy:Math.random()*-11-2,
+    g:.35,l:70+Math.random()*40,a:1,c:cols[i%cols.length],s:3+Math.random()*4,r:Math.random()*6});
+  if(parts.length===n) requestAnimationFrame(tick);
+}
+function tick(){
+  ctx.clearRect(0,0,fx.width,fx.height);
+  parts=parts.filter(p=>p.l>0);
+  parts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;p.vy+=p.g;p.l--;p.a=Math.max(0,p.l/90);p.r+=.2;
+    ctx.save();ctx.globalAlpha=p.a;ctx.translate(p.x,p.y);ctx.rotate(p.r);
+    ctx.fillStyle=p.c;ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*1.6);ctx.restore()});
+  if(parts.length)requestAnimationFrame(tick); else ctx.clearRect(0,0,fx.width,fx.height);
+}
+function shake(sel){const e=document.querySelector(sel);if(!e)return;
+  e.classList.remove('shake');void e.offsetWidth;e.classList.add('shake')}
+
+/* ===================== GENERATORS =====================
+   One source of truth per problem: the string `expr`.
+   The answer is that string evaluated; the display is that string rewritten. */
+const num=v=>parseFloat(String(v==null?'':v).replace(/[,\s]/g,''));
+function val(e){ return Function('"use strict";return ('+e+')')(); }
+function show(e){ return e.replace(/\*/g,' × ').replace(/\//g,' ÷ ')
+  .replace(/\+/g,' + ').replace(/-/g,' − ').replace(/\s+/g,' ').trim(); }
+const ri=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const GEN={};
+const shuf=a=>a.slice().sort(()=>Math.random()-.5);
+const comma=n=>n.toLocaleString('en-US');
+
+/* ×11 with the carry explained */
+function x11steps(n){const a=Math.floor(n/10),b=n%10,s=a+b;
+  if(s<10) return ['Split the digits: '+a+' and '+b+'. Their sum is '+s+'.',
+    'Write '+a+', then '+s+', then '+b+': <span class="hl">'+(11*n)+'</span>.',
+    'Why: '+n+' × 11 = '+n+'0 + '+n+' — the digits land on top of each other in the tens column.'];
+  return ['Split the digits: '+a+' and '+b+'. Their sum is '+s+' — too big for one slot.',
+    'Write the '+(s-10)+' in the middle and <span class="hl">carry the 1</span> onto the '+a+': '+(a+1)+', '+(s-10)+', '+b+'.',
+    'So '+n+' × 11 = <span class="hl">'+(11*n)+'</span>.'];}
+function sq5steps(t){const n=t*10+5;return ['The tens digit is '+t+'. Multiply it by the next number: '+t+' × '+(t+1)+' = '+(t*(t+1))+'.',
+  'Stick 25 on the end: <span class="hl">'+(n*n)+'</span>.','Why: (10n+5)² = 100·n(n+1) + 25. Week 29 proves it.'];}
+function mirsteps(a,d){return ['Both numbers sit '+d+' away from '+a+'.',
+  'Mirror rule: '+a+'² − '+d+'² = '+(a*a)+' − '+(d*d)+' = <span class="hl">'+(a*a-d*d)+'</span>.',
+  'This is the difference of squares: (a−d)(a+d) = a² − d². The middle terms cancel.'];}
+function compsteps(k,n){const R=n>100?1000:100, d=n-R, sign=d<0?'−':'+', ad=Math.abs(d);
+  return ['Treat '+n+' as '+R+' '+sign+' '+ad+'.', k+' × '+R+' = '+comma(k*R)+', and '+k+' × '+ad+' = '+(k*ad)+'.',
+    comma(k*R)+' '+sign+' '+(k*ad)+' = <span class="hl">'+comma(k*n)+'</span>.'];}
+
+GEN.warm=()=>{
+  const t=pick(['x11e','x25','x5','sq','near','times','c100']);
+  if(t==='x11e'){const n=pick([12,13,21,23,24,31,32,34,42,43,52,61,71,81]);
+    return{disp:n+' × 11',ans:11*n,steps:x11steps(n)}}
+  if(t==='x25'){const n=ri(1,20)*4;
+    return{disp:'25 × '+n,ans:25*n,steps:['Day 1 rule: ÷ 4 then × 100. '+n+' ÷ 4 = '+(n/4)+' → '+(25*n)+'.']}}
+  if(t==='x5'){const n=ri(6,60)*2;
+    return{disp:'5 × '+n,ans:5*n,steps:['Halve then × 10: '+(n/2)+' → '+(5*n)+'.']}}
+  if(t==='sq'){const n=pick([10,11,12,13,14,15,20,25,30,40,50]);
+    return{disp:n+' ²',ans:n*n,steps:[n+' × '+n+' = '+(n*n)+'. Know these cold — the mirror rule depends on them.']}}
+  if(t==='near'){const k=ri(3,9),n=pick([99,101]);
+    return{disp:k+' × '+n,ans:k*n,steps:compsteps(k,n)}}
+  if(t==='times'){const a=ri(3,9),b=ri(3,9),e=a+'*'+b;
+    return{disp:show(e),ans:val(e),steps:['Times tables stay in the warm-up all year. '+val(e)+'.']}}
+  const a=ri(11,89);
+  return{disp:'100 − '+a,ans:100-a,steps:['Complement to 100: '+(100-a)+'.']};
+};
+
+GEN.x11=()=>{
+  const t=pick(['nocarry','carry','carry','reverse']);
+  if(t==='nocarry'){const a=ri(1,8),b=ri(1,9-a),n=a*10+b;
+    return{disp:n+' × 11',ans:11*n,steps:x11steps(n)}}
+  if(t==='carry'){const a=ri(2,9),b=ri(10-a,9),n=a*10+b;
+    return{disp:n+' × 11',ans:11*n,steps:x11steps(n),
+      trap:'The digit sum is '+(a+b)+'. Forgetting the carry gives '+(a*100+((a+b)%10)*10+b)+' — one of the two most common ×11 slips.'}}
+  const a=ri(1,8),b=ri(1,9-a),n=a*10+b;
+  return{disp:'___ × 11 = '+(11*n),word:true,ans:n,
+    steps:['Run the trick backwards. Outer digits of '+(11*n)+' are '+a+' and '+b+'.',
+      'Check the middle: '+a+' + '+b+' = '+(a+b)+' ✓. So the number is '+n+'.']};
+};
+
+GEN.sq5=()=>{
+  const t=pick(['fwd','fwd','back','which']);
+  if(t==='fwd'){const k=ri(1,9);return{disp:(k*10+5)+' ²',ans:(k*10+5)**2,steps:sq5steps(k)}}
+  if(t==='back'){const k=ri(2,9),n=k*10+5;
+    return{disp:'___ ² = '+comma(n*n),word:true,ans:n,
+      steps:['It ends in 25, so the root ends in 5.','Strip the 25: '+(k*(k+1))+' = '+k+' × '+(k+1)+'. The tens digit is '+k+'.',
+        'So the number is '+n+'.']}}
+  const k=ri(1,9),n=k*10+5,wrong=k*k*100+25;
+  return{disp:'Which of these is '+n+'² ?',word:true,ans:n*n,choices:shuf([n*n,wrong,n*n+100,n*n-100]),
+    steps:sq5steps(k),trap:(wrong)+' is the trap: it used '+k+' × '+k+' instead of '+k+' × '+(k+1)+'.'};
+};
+
+GEN.mirror=()=>{
+  const t=pick(['fwd','fwd','back','sum']);
+  if(t==='fwd'){const a=pick([20,30,40,50,60,70,80,90,100]),d=pick([1,1,2,3]);
+    return{disp:(a-d)+' × '+(a+d),ans:a*a-d*d,steps:mirsteps(a,d)}}
+  if(t==='back'){const a=pick([30,40,50,60,70,75,80,100]),d=pick([10,20,25,30]).valueOf();
+    if(d>=a) return GEN.mirror();
+    return{disp:a+'² − '+d+'²',ans:a*a-d*d,
+      steps:['Run the mirror rule backwards: a² − d² = (a − d)(a + d).',
+        '('+a+' − '+d+')('+a+' + '+d+') = '+(a-d)+' × '+(a+d)+' = <span class="hl">'+comma(a*a-d*d)+'</span>.',
+        'No squaring needed. Noticing a difference of two squares is the actual skill.']}}
+  const a=pick([25,30,40,50]),d=pick([1,2,3]);
+  return{disp:'Two numbers add to '+(2*a)+' and differ by '+(2*d)+'. What is their product?',word:true,ans:a*a-d*d,
+    steps:['Half the sum is the middle: '+a+'. Half the difference is the distance: '+d+'.',
+      'The numbers are '+(a-d)+' and '+(a+d)+', so the product is '+a+'² − '+d+'² = '+(a*a-d*d)+'.']};
+};
+
+GEN.dist=()=>{
+  const t=pick(['below','above','big','factor']);
+  if(t==='below'){const k=ri(3,9),n=pick([98,99,97,96]);return{disp:k+' × '+n,ans:k*n,steps:compsteps(k,n),
+    trap:'The correction is '+k+' × '+(100-n)+' = '+(k*(100-n))+', not '+(100-n)+'. You took away '+(100-n)+' copies of '+k+'.'}}
+  if(t==='above'){const k=ri(3,12),n=pick([101,102,103]);return{disp:k+' × '+n,ans:k*n,steps:compsteps(k,n)}}
+  if(t==='big'){const k=ri(3,9),n=pick([999,998,1001,1002]);return{disp:k+' × '+comma(n),ans:k*n,steps:compsteps(k,n)}}
+  const c=pick([25,12,15,11]),a=ri(3,9),b=ri(2,9);
+  if(a===b) return GEN.dist();
+  return{disp:c+' × '+a+' + '+c+' × '+b,ans:c*(a+b),
+    steps:['Both terms contain '+c+'. Pull it out: '+c+' × ('+a+' + '+b+').',
+      a+' + '+b+' = '+(a+b)+', so '+c+' × '+(a+b)+' = <span class="hl">'+(c*(a+b))+'</span>.',
+      'This is the distributive law run in reverse. Every shortcut today is this law in disguise.']};
+};
+
+/* --- Spot the First Mistake: one wrong step; later lines follow from the bad number --- */
+GEN.trap=()=>{
+  const kind=pick(['x11','sq5','comp']);
+  let prob,L=[],bad,why;
+  if(kind==='x11'){const a=ri(2,9),b=ri(10-a,9),n=a*10+b,s=a+b;
+    prob=n+' × 11';
+    const mode=pick(['order','slip']);
+    if(mode==='order'){bad=2;
+      L=['Split: '+a+' and '+b+', sum '+s,'Write '+a+', then '+(s%10)+', then '+b,'So the answer is '+(a*100+(s%10)*10+b)];
+      why='The sum was '+s+', which is 10 or more, so the 1 must carry onto the '+a+'. Correct: '+(11*n)+'.';}
+    else{bad=1;const w=s+1;
+      L=['Split: '+a+' and '+b+', sum '+w,'Carry the 1: '+(a+1)+', '+(w-10)+', '+b,'So the answer is '+((a+1)*100+(w-10)*10+b)];
+      why=a+' + '+b+' = '+s+', not '+w+'. Steps 2 and 3 are consistent with the bad sum — that is what makes a slip expensive.';}
+  } else if(kind==='sq5'){const k=ri(2,9),n=k*10+5;
+    prob=n+'²';
+    const mode=pick(['order','slip']);
+    if(mode==='order'){bad=1;
+      L=['Tens digit '+k+'; multiply by itself: '+k+' × '+k+' = '+(k*k),'Stick 25 on the end','Answer: '+(k*k*100+25)];
+      why='The rule is '+k+' × (next number) = '+k+' × '+(k+1)+' = '+(k*(k+1))+', not '+k+' × '+k+'. Correct: '+(n*n)+'.';}
+    else{bad=3;
+      L=['Tens digit '+k+'; '+k+' × '+(k+1)+' = '+(k*(k+1)),'Stick 25 on the end','Answer: '+(k*(k+1)*100+52)];
+      why='Step 3 wrote 52 instead of 25. The method was right; the copy was wrong. Correct: '+(n*n)+'.';}
+  } else {const k=ri(3,9),n=pick([97,98,99]),c=100-n;
+    prob=k+' × '+n;
+    const mode=pick(['order','slip']);
+    if(mode==='order'){bad=2;
+      L=[k+' × 100 = '+(k*100),'Take away '+c+': '+(k*100)+' − '+c+' = '+(k*100-c),'So '+k+' × '+n+' = '+(k*100-c)];
+      why='You replaced '+n+' with 100, which added '+c+' copies of '+k+' — so take away '+k+' × '+c+' = '+(k*c)+', not '+c+'. Correct: '+(k*n)+'.';}
+    else{bad=1;
+      L=[k+' × 100 = '+(k*100+100),'Take away '+k+' × '+c+' = '+(k*c),(k*100+100)+' − '+(k*c)+' = '+(k*100+100-k*c)];
+      why=k+' × 100 = '+(k*100)+', not '+(k*100+100)+'. The easy step is where the slip hid.';}
+  }
+  return{disp:'A student worked on <span class="mono">'+prob+'</span> like this. Which step is the <span class="hl">first</span> mistake?',
+    word:true,lines:L,ans:bad,choices:[1,2,3],
+    steps:['Step '+bad+' is where it first goes wrong.',why,
+      'Hunting for the FIRST wrong step is exactly what you do when you mark your own Saturday paper.']};
+};
+
+/* ===================== 24 FORGE ===================== */
+const EPS=1e-6;
+function solve24(nums,target){
+  function rec(list){
+    if(list.length===1) return Math.abs(list[0].v-target)<EPS?list[0].s:null;
+    for(let i=0;i<list.length;i++)for(let j=0;j<list.length;j++){
+      if(i===j)continue;
+      const a=list[i],b=list[j],rest=list.filter((_,k)=>k!==i&&k!==j);
+      const c=[{v:a.v+b.v,s:'('+a.s+' + '+b.s+')'},{v:a.v*b.v,s:'('+a.s+' × '+b.s+')'},
+               {v:a.v-b.v,s:'('+a.s+' − '+b.s+')'}];
+      if(Math.abs(b.v)>EPS)c.push({v:a.v/b.v,s:'('+a.s+' ÷ '+b.s+')'});
+      for(const x of c){const r=rec(rest.concat([x]));if(r)return r}
+    }
+    return null;
+  }
+  return rec(nums.map(n=>({v:n,s:''+n})));
+}
+function deal24(target){
+  for(let t=0;t<400;t++){
+    const h=[0,0,0,0].map(()=>ri(1,10));
+    const sol=solve24(h,target);
+    if(sol) return {hand:h,sol};
+  }
+  return {hand:[4,6,2,3],sol:solve24([4,6,2,3],target)};
+}
+function checkExpr(str,hand,target){
+  if(!str.trim()) return {ok:false,msg:'Build something first.'};
+  if(!/^[0-9+\-*/×÷−(). ]+$/.test(str)) return {ok:false,msg:'Only numbers, + − × ÷ and parentheses.'};
+  const js=str.replace(/×/g,'*').replace(/÷/g,'/').replace(/−/g,'-');
+  const used=(js.match(/\d+/g)||[]).map(Number).sort((a,b)=>a-b);
+  const want=hand.slice().sort((a,b)=>a-b);
+  if(used.length!==want.length||used.some((v,i)=>v!==want[i]))
+    return {ok:false,msg:'Use each of the four cards exactly once — and no sticking digits together.'};
+  let v; try{v=Function('"use strict";return ('+js+')')()}catch(e){return{ok:false,msg:'That is not a finished expression — check the brackets.'}}
+  if(typeof v!=='number'||!isFinite(v)) return {ok:false,msg:'Check the brackets.'};
+  return Math.abs(v-target)<EPS?{ok:true,v}:{ok:false,msg:'That comes out to '+(Math.round(v*1000)/1000)+', not '+target+'.'};
+}
+
+/* ===================== CONCEPTS ===================== */
+const CONCEPTS={
+x11:{title:'× 11',en:'Split the digits, drop their sum in the middle',cards:[
+ {h:'The trick',b:'<p class="mono" style="font-size:1.25rem">35 × 11</p>'+
+  '<p>Digits 3 and 5, sum 8. Write 3, then 8, then 5: <span class="hl">385</span>.</p>'+
+  '<p class="mono" style="font-size:1.25rem">78 × 11</p>'+
+  '<p>Digits 7 and 8, sum 15 — too big for one slot. Write the 5 in the middle and <b>carry the 1</b> onto the 7: <span class="hl">858</span>.</p>'},
+ {h:'Why it works',b:'<p>11 = 10 + 1, so 35 × 11 = 350 + 35.</p>'+
+  '<pre class="mono" style="font-size:1.1rem;line-height:1.3;margin:6px 0">  350\n+  35\n  385</pre>'+
+  '<p>The hundreds digit comes from the 3, the ones digit from the 5, and the tens column is where the two digits land on top of each other and add. That is the whole trick.</p>'}]},
+sq5:{title:'Squares ending in 5',en:'n × (n+1), then stick 25 on the end',cards:[
+ {h:'The trick',b:'<p class="mono" style="font-size:1.25rem">45²</p>'+
+  '<p>Tens digit 4. Multiply by the next number: 4 × 5 = 20. Stick 25 on the end: <span class="hl">2025</span>.</p>'+
+  '<p class="mono" style="font-size:1.25rem">85²</p><p>8 × 9 = 72, then 25 → <span class="hl">7225</span>.</p>'},
+ {h:'Why it works',b:'<p>(10n + 5)² = 100n² + 100n + 25 = 100·n(n+1) + 25.</p>'+
+  '<p>"Stick 25 on the end" is the + 25. "n times next" is the 100·n(n+1). You will prove this properly in week 29 — for now the pattern is enough, but <i>knowing there is a proof</i> is what keeps you from misapplying it.</p>'}]},
+mirror:{title:'Mirror pairs',en:'Two numbers the same distance from a round number',cards:[
+ {h:'The trick',b:'<p class="mono" style="font-size:1.25rem">49 × 51</p>'+
+  '<p>Both are 1 away from 50. Answer: 50² − 1² = 2500 − 1 = <span class="hl">2499</span>.</p>'+
+  '<p class="mono" style="font-size:1.25rem">38 × 42</p><p>Both are 2 away from 40: 1600 − 4 = <span class="hl">1596</span>.</p>'},
+ {h:'The rule, and its name',b:'<p class="mono" style="font-size:1.25rem">(a − d)(a + d) = a² − d²</p>'+
+  '<p>Its proper name is the <b>difference of squares</b>, and it is one of the most used identities in all of competition math.</p>'+
+  '<p>It runs backwards too: 75² − 25² = (75 − 25)(75 + 25) = 50 × 100 = <span class="hl">5000</span>, with no squaring at all.</p>'},
+ {h:'Why it works',b:'<p>Multiply out (a − d)(a + d): you get a² + ad − ad − d². The two middle terms cancel.</p>'+
+  '<p>Try it with a = 50 and d = 1 and watch the 50s disappear.</p>'}]},
+dist:{title:'Next to a round number',en:'Compensation, now for products',cards:[
+ {h:'The trick',b:'<p class="mono">6 × 98 = 6 × (100 − 2) = 600 − 12 = <span class="hl">588</span></p>'+
+  '<p class="mono">7 × 999 = 7000 − 7 = <span class="hl">6993</span></p>'+
+  '<p class="mono">12 × 101 = 1200 + 12 = <span class="hl">1212</span></p>'+
+  '<p>The correction is <b>k copies</b> of the gap, not the gap itself: 6 × 98 takes away 6 × 2 = 12, not 2.</p>'},
+ {h:'The one idea under all four shortcuts',b:'<p class="mono" style="font-size:1.2rem">a × (b + c) = ab + ac</p>'+
+  '<p>That is the <b>distributive law</b>. Every shortcut today is this law wearing a costume. If you forget a shortcut, rebuild it from here.</p>'+
+  '<p>It also runs in reverse: 25 × 16 + 25 × 24 = 25 × (16 + 24) = 25 × 40 = 1000.</p>'},
+ {h:'How to see which shortcut to use',b:'<p>Each one rewrites an ugly product as <b>a round-number product plus or minus a small correction</b>.</p>'+
+  '<p>Learn to see the round number hiding inside: 49 wants to be 50, 85 is 80-and-a-bit, 999 wants to be 1000. Once you see it, the shortcut picks itself.</p>'}]}};
+
+/* ===================== TRICK CARDS (collectible) ===================== */
+const CARDS=[
+ {id:'x11',n:'The Split Eleven',t:'2-digit × 11 → add the digits, drop the sum in the middle, carry if it is 10+',
+  eg:'35 × 11 = 3(8)5 = 385 · 78 × 11 = 7(15)8 → 858',how:'Clear × 11',got:s=>s.pass.x11},
+ {id:'sq5',n:'Ends in Five',t:'n5² → n × (n+1), then stick 25 on the end',
+  eg:'45² = 4×5 | 25 = 2025 · 85² = 72 | 25 = 7225',how:'Clear Squares ending in 5',got:s=>s.pass.sq5},
+ {id:'dos',n:'Mirror Pair',t:'Numbers either side of a round number: (a−d)(a+d) = a² − d²',
+  eg:'49 × 51 = 2500 − 1 = 2499 · 38 × 42 = 1600 − 4 = 1596',how:'Clear Mirror pairs',got:s=>s.pass.mirror},
+ {id:'dosback',n:'Mirror, Reversed',t:'A difference of two squares factors instantly: a² − d² = (a−d)(a+d)',
+  eg:'75² − 25² = 50 × 100 = 5000 · 999 × 1001 = 10⁶ − 1',how:'Two stars on Mirror pairs',got:s=>(s.stars.mirror||0)>=2},
+ {id:'x99',n:'The Near Miss',t:'× 99 → × 100, then take one copy away. × 101 → add one copy.',
+  eg:'7 × 999 = 7000 − 7 = 6993 · 12 × 101 = 1212',how:'Clear Next to a round number',got:s=>s.pass.dist},
+ {id:'kcopies',n:'K Copies',t:'When you swap 98 for 100 you added 2 copies of the OTHER number — subtract k × 2, not 2',
+  eg:'6 × 98 = 600 − 12, not 600 − 2',how:'Two stars on Next to a round number',got:s=>(s.stars.dist||0)>=2},
+ {id:'distlaw',n:'The Costume',t:'a(b + c) = ab + ac. Every shortcut today is this law in disguise. Forget a trick? Rebuild it from here.',
+  eg:'25 × 36 = 25 × (40 − 4) = 1000 − 100 = 900',how:'Reach a 10-answer streak',got:s=>s.best>=10},
+ {id:'twoways',n:'Two Ways',t:'When two shortcuts reach the same answer, you have checked your work for free',
+  eg:'25 × 36: ÷4 then ×100 = 900; and 25 × (40 − 4) = 900 ✓',how:'40 correct answers',got:s=>s.right>=40},
+ {id:'roundinside',n:'The Round Number Inside',t:'49 wants to be 50. 85 is 80-and-a-bit. 999 wants to be 1000. See it, and the shortcut picks itself.',
+  eg:'29 × 31 → 30 is hiding → 900 − 1 = 899',how:'Beat the Boss',got:s=>s.bossWin>0},
+ {id:'case',n:'List Every Case',t:'When there are only a few possibilities, write them all down instead of guessing. Its name is casework.',
+  eg:'Which shortcut applies? Try each of the four — it takes ten seconds.',how:'Solve 3 hands in the Forge',got:s=>s.forge>=3},
+ {id:'first',n:'First Mistake',t:'When checking work, hunt for the FIRST wrong step. Everything after it is wrong for free.',
+  eg:'Two wrong lines usually means one wrong decision.',how:'Clear Spot the Mistake',got:s=>s.pass.trap},
+ {id:'breathe',n:'Buzzer Nerve',t:'Under a timer, read twice and compute once. Rereading costs 2 seconds; a misread costs the question.',
+  eg:'Most speed-round errors are reading errors, not maths errors.',how:'Win a duel',got:s=>s.duelW>0}
+];
+
+/* ===================== BOSS SET ===================== */
+const BOSS=[
+ {disp:'86 × 11',ans:946,steps:x11steps(86),trap:'Digit sum 14 — the carry is the whole question.'},
+ {disp:'95²',ans:9025,steps:sq5steps(9)},
+ {disp:'48 × 52',ans:2496,steps:mirsteps(50,2),trap:'You met this yesterday as an estimate. Today it is exact in one line.'},
+ {disp:'25 × 68',ans:1700,steps:['Day 1 rule: 68 ÷ 4 = 17, then × 100 = 1700.','Or today\u2019s way: 25 × (70 − 2) = 1750 − 50 = 1700.','Two shortcuts, one answer — your work is checked for free.']},
+ {disp:'99 × 63',ans:6237,steps:compsteps(63,99),trap:'Take away one copy of 63, not 1: 6300 − 63.'},
+ {disp:'101 × 47 + 99 × 47',ans:9400,steps:['Both terms contain 47. Pull it out: 47 × (101 + 99).','101 + 99 = 200.','47 × 200 = 9400.'],
+  trap:'Computing each product separately (4747 + 4653) also works — and gives you two chances to slip. Factoring gives you none.'},
+ {disp:'Without squaring either number, find 75² − 25².',word:true,ans:5000,
+  steps:['A difference of two squares factors: (75 − 25)(75 + 25).','50 × 100 = 5000.'],
+  trap:'Squaring gets there too (5625 − 625), but 75² is a fifteen-second job and 50 × 100 is instant. Noticing the pattern is the skill.'},
+ {disp:'999 × 1001',ans:999999,steps:['Both sit 1 away from 1000.','1000² − 1² = 1,000,000 − 1 = 999,999.'],
+  trap:'Shortcuts do not care about size. The same rule that did 49 × 51 does this.'}
+];
+
+/* ===================== LEVELS ===================== */
+const LEVELS=[
+ {id:'warm',ico:'⚡',nm:'Warm-up',en:'Squares, ×25, ×5',gen:'warm',need:12,mins:10,
+  intro:'Ten minutes, fast and light. Anything slower than three seconds goes on tomorrow\u2019s warm-up list.'},
+ {id:'x11',ico:'1️⃣',nm:'× 11',en:'Shortcut 1',gen:'x11',need:8,mins:5,concept:'x11',
+  intro:'Split the digits and drop their sum in the middle. Watch for the carry.'},
+ {id:'sq5',ico:'5️⃣',nm:'Squares ending in 5',en:'Shortcut 2',gen:'sq5',need:8,mins:5,concept:'sq5',
+  intro:'n × (n+1), then stick 25 on the end. Also learn to run it backwards.'},
+ {id:'mirror',ico:'🪞',nm:'Mirror pairs',en:'Shortcut 3',gen:'mirror',need:8,mins:5,concept:'mirror',
+  intro:'Two numbers the same distance either side of a round number. This one has a famous name.'},
+ {id:'dist',ico:'🎭',nm:'Next to a round number',en:'Shortcut 4 — and the law underneath',gen:'dist',need:8,mins:5,concept:'dist',
+  intro:'Compensation for products, and the one law all four shortcuts are hiding behind.'},
+ {id:'trap',ico:'🔍',nm:'Spot the Mistake',en:'Mark the work',gen:'trap',need:6,mins:6,
+  intro:'A student\u2019s working with exactly one wrong step. Find the <b>first</b> one.'},
+ {id:'forge',ico:'🎴',nm:'Number Forge',en:'Make the target',forge:true,need:3,mins:10,
+  intro:'Four cards, one target, each card used exactly once. Brackets allowed — brackets are the whole game.'},
+ {id:'duel',ico:'⚔️',nm:'Countdown Duel',en:'Race a rival',duel:true,need:5,mins:6,
+  intro:'Buzzer round. Answer before your rival does. First to 5. This one is a speed game — the 6-minute rule does not apply here.'},
+ {id:'boss',ico:'👑',nm:'Boss Battle',en:'Contest problems',boss:true,need:8,mins:25,
+  intro:'The boss has 100 HP. Correct answers hurt it, and faster answers hurt it more — but there is <b>no time limit</b> and no penalty for thinking. A wrong answer costs a heart.'}
+];
+const LIDX=Object.fromEntries(LEVELS.map((l,i)=>[l.id,i]));
+function unlocked(i){ return i===0 || S.pass[LEVELS[i-1].id] }
+
+/* ===================== ROUTER ===================== */
+let duelTimer=null;
+function go(v,a){ if(duelTimer){clearInterval(duelTimer);duelTimer=null} location.hash=a?v+'/'+a:v; render(); }
+addEventListener('hashchange',render);
+function render(){
+  if(duelTimer){clearInterval(duelTimer);duelTimer=null}
+  const [v,a]=location.hash.replace('#','').split('/'); hud();
+  if(v==='concept')return viewConcept(a);
+  if(v==='play')return viewPlay(a);
+  if(v==='gym')return viewGym(a);
+  if(v==='wrong')return viewWrong();
+  if(v==='cards')return viewCards();
+  if(v==='summary')return viewSummary();
+  return viewMap();
+}
+
+/* ===================== MAP ===================== */
+function viewMap(){
+  const total=LEVELS.length, done=LEVELS.filter(l=>S.pass[l.id]).length;
+  const cardsGot=CARDS.filter(c=>c.got(S)).length;
+  app.innerHTML=`
+  <h1>Day 3 · Multiplication Shortcuts</h1>
+  <p class="sub">Week 1 · Block A: Foundations &amp; habits · Wednesday, October 14, 2026</p>
+  <div class="card quiet" style="border-color:var(--gold)"><b>Before you start:</b> any problem you hit
+  <i>Stuck — star it and move on</i> on yesterday gets its one honest attempt now, before you read its solution.
+  (Different from the error-book star you dated three days out: Day 1’s comes due tomorrow, October 15.)</div>
+  <div class="card quiet">
+    <b>The hour:</b> 10 min warm-up → 20 min learning the concepts → 25 min practice → 5 min error book.
+    Each level shows its suggested time. When the timer rings, stop — even mid-problem.
+    <div class="row"><b style="font-size:0.875rem">${done} / ${total} levels cleared</b></div>
+    <div class="pbar"><i style="width:${done/total*100}%"></i></div>
+  </div>
+  <h2>Levels</h2>
+  <div class="grid">${LEVELS.map((l,i)=>{
+    const ok=unlocked(i), st=S.stars[l.id]||0, game=l.forge||l.duel||l.boss;
+    return `<div class="lvl ${game?'game':''} ${ok?'':'locked'}" onclick="${ok?`go('play','${l.id}')`:''}">
+      <span class="tag">${l.mins} min</span><div class="ico">${ok?l.ico:'🔒'}</div>
+      <div class="nm">${l.nm}</div><div class="en">${l.en}</div>
+      <div class="st">${'★'.repeat(st)}${'☆'.repeat(3-st)}</div></div>`}).join('')}</div>
+  <h2>Open any time</h2>
+  <div class="row">
+    <button onclick="go('concept','x11')">📖 Concept handbook</button>
+    <button onclick="go('cards')">🃏 Trick cards (${cardsGot}/${CARDS.length})</button>
+    <button onclick="go('gym','x11')">♾️ Endless practice</button>
+    <button onclick="go('wrong')">📕 Error book (${S.wrong.length})</button>
+    <button onclick="go('summary')">✍️ Today's summary</button>
+  </div>
+  <div class="card"><h3>Badges</h3>
+    ${[['🌱 First problem',S.seen>0],['🔟 10 correct',S.right>=10],['⭐ 50 correct',S.right>=50],
+       ['🔥 10 streak',S.best>=10],['🔥🔥 20 streak',S.best>=20],['🎴 Forge solved',S.forge>0],
+       ['⚔️ Duel won',S.duelW>0],['👑 Boss down',S.bossWin>0],['💎 All levels cleared',done===total]]
+      .map(b=>`<span class="badge ${b[1]?'got':''}">${b[0]}</span>`).join('')}</div>
+  ${S.xp>0?`<div class="row"><button class="ghost" onclick="reset()">Clear progress and start over</button></div>`:''}`;
+}
+function reset(){if(confirm('Erase all progress and the error book?')){localStorage.removeItem(KEY);location.reload()}}
+
+/* ===================== CONCEPT HANDBOOK ===================== */
+function viewConcept(key){
+  key=key||'x11'; const c=CONCEPTS[key];
+  app.innerHTML=`<div class="row"><button class="ghost" onclick="go('')">← Back to map</button></div>
+  <h1>${c.title} <span style="color:var(--dim);font-size:0.9375rem">· ${c.en}</span></h1>
+  <div class="row">${Object.keys(CONCEPTS).map(k=>
+    `<button class="${k===key?'primary':''}" onclick="go('concept','${k}')">${CONCEPTS[k].title}</button>`).join('')}</div>
+  ${c.cards.map(cd=>`<div class="card"><h3>${cd.h}</h3>${cd.b}</div>`).join('')}
+  <div class="card quiet"><b>Now close the page.</b> Redo the example in your head and <b>say the steps out loud</b>.
+  If you cannot, read it again — that check is the entire point of the Learn block.</div>
+  <div class="row"><button class="primary" onclick="go('play','${key}')">Practise this →</button>
+  <button onclick="go('gym','${key}')">Endless practice</button></div>`;
+}
+
+/* ===================== TRICK CARDS ===================== */
+function viewCards(){
+  app.innerHTML=`<div class="row"><button class="ghost" onclick="go('')">← Back to map</button></div>
+  <h1>🃏 Trick cards</h1>
+  <p class="sub">${CARDS.filter(c=>c.got(S)).length} of ${CARDS.length} collected. Each one is a real shortcut — not a sticker.</p>
+  ${CARDS.map(c=>{const got=c.got(S);
+    return `<div class="tcard ${got?'':'locked'}"><h4>${got?'🃏 '+c.n:'🔒 Locked'}</h4>
+      ${got?`<div>${c.t}</div><div class="eg mono">${c.eg}</div>`
+          :`<div class="sub">Unlock: ${c.how}</div>`}</div>`}).join('')}`;
+}
+
+/* ===================== QUIZ ENGINE ===================== */
+let Q=null,P={},tStart=0;
+function viewPlay(id){
+  const i=LIDX[id]; if(i===undefined||!unlocked(i))return go('');
+  const L=LEVELS[i];
+  if(L.forge)return forgeStart();
+  if(L.duel)return duelStart();
+  P={id,i:0,right:0,n:L.need,pool:L.boss?BOSS.slice():null,starred:[],hp:100,lives:3};
+  app.innerHTML=`<div class="row"><button class="ghost" onclick="go('')">← Back to map</button>
+   ${L.concept?`<button class="ghost" onclick="go('concept','${L.concept}')">📖 Read the concept</button>`:''}</div>
+  <h1>${L.ico} ${L.nm}</h1><p class="sub">${L.en} · about ${L.mins} min</p>
+  <div class="card quiet">${L.intro}</div><div class="card" id="qcard"></div>`;
+  nextQ();
+}
+function bossFace(hp){return hp>70?'👑':hp>40?'😠':hp>15?'🥵':'💢'}
+function nextQ(){
+  const L=LEVELS[LIDX[P.id]];
+  if(L.boss){ if(P.hp<=0)return finish(true); if(P.lives<=0)return finish(false); }
+  else if(P.i>=P.n) return finish();
+  Q = L.boss ? (P.pool[P.i]||GEN[pick(['x11','sq5','mirror','dist'])]()) : GEN[L.gen]();
+  tStart=Date.now();
+  document.getElementById('qcard').innerHTML=`
+   ${L.boss?`<div class="boss"><div class="bossface pop">${bossFace(P.hp)}</div>
+     <div class="hpwrap"><div class="hp" style="width:${P.hp}%"></div></div>
+     <div class="qsub">Boss HP ${Math.max(0,P.hp)} / 100 · <span class="hearts">${'❤️'.repeat(P.lives)}${'🖤'.repeat(3-P.lives)}</span></div></div>`
+    :`<div class="pbar"><i style="width:${P.i/P.n*100}%"></i></div>
+      <div class="qsub">Problem ${P.i+1} of ${P.n} ${combo>1?`· <span class="combo">🔥 streak ${combo}</span>`:''}</div>`}
+   <div class="q ${Q.word?'word':''}">${Q.disp}</div>
+   ${Q.lines?`<ol class="mono" style="margin:10px 0 0 20px;font-size:1.0625rem">${Q.lines.map(l=>`<li style="margin:5px 0">${l}</li>`).join('')}</ol>
+     <p class="qsub" style="margin-top:10px">Which step is the first mistake?</p>`:''}
+   ${Q.unit?`<div class="qsub">Answer in${Q.unit}.</div>`:''}
+   ${Q.choices?`<div class="opts">${Q.choices.map(o=>`<button class="opt" onclick="answer(${o})">${Q.lines?'Step '+o:o}</button>`).join('')}</div>`
+    :`<div class="row"><input type="text" ${RO()} id="ans" inputmode="decimal" autocomplete="off" placeholder="answer">
+      <button class="primary" onclick="answer()">Submit</button>
+      <button class="ghost" onclick="skip()">Stuck — star it and move on</button></div>`}
+   <div class="fb" id="fb"></div>`;
+  const el=document.getElementById('ans'); if(el){el.focus();el.onkeydown=e=>{if(e.key==='Enter')answer()}}
+}
+function fbHTML(ok,q){
+  return `<b>${ok?'✅ Correct':'❌ Look again'}</b>${ok?'':' — the answer is <span class="hl">'+
+   (q.lines?'step '+q.ans:q.ans+(q.unit||''))+'</span>'}
+   <ol>${q.steps.map(s=>`<li>${s}</li>`).join('')}</ol>
+   ${q.trap?`<p style="margin-top:10px;color:var(--warn)">⚠️ ${q.trap}</p>`:''}`;
+}
+function answer(choice){
+  const el=document.getElementById('ans');
+  const v = choice!==undefined?choice:num(el.value);
+  if(isNaN(v))return;
+  const L=LEVELS[LIDX[P.id]], ok=Math.abs(v-Q.ans)<1e-9, secs=(Date.now()-tStart)/1000;
+  S.seen++;
+  let dmg=0;
+  if(ok){S.right++;combo++;S.best=Math.max(S.best,combo);S.xp+=10+Math.min(combo,10)*2;P.right++;
+    SFX.ok(combo);
+    if(L.boss){dmg=Math.round(10+Math.max(0,15-secs/2));P.hp-=dmg;SFX.hit();burst(26,innerWidth/2,230);}
+  }else{combo=0;SFX.no();shake('#qcard');
+    if(L.boss)P.lives--;
+    S.wrong.push({lvl:P.id,disp:Q.disp,ans:Q.lines?'step '+Q.ans:Q.ans,steps:Q.steps,trap:Q.trap||'',lines:Q.lines||null});}
+  save();hud();
+  const fb=document.getElementById('fb');
+  fb.className='fb '+(ok?'ok':'no');
+  fb.innerHTML=(L.boss&&ok?`<b>💥 ${dmg} damage</b> — ${secs<6?'that was fast':'solid'}. Boss at ${Math.max(0,P.hp)} HP.<br>`:'')
+    +(L.boss&&!ok?`<b>💔 The boss lands a hit.</b> ${P.lives} heart${P.lives===1?'':'s'} left.<br>`:'')
+    +fbHTML(ok,Q)+`<div class="row"><button class="primary" onclick="P.i++;nextQ()">${
+      L.boss&&P.hp<=0?'Finish it →':L.boss&&P.lives<=0?'See the result →':'Next →'}</button></div>`;
+  document.querySelectorAll('#qcard button').forEach(b=>{if(b.onclick&&!b.onclick.toString().includes('nextQ'))b.disabled=true});
+  fb.querySelectorAll('button').forEach(b=>b.disabled=false);
+  if(ok&&combo>=5&&combo%5===0)toastMsg('🔥 '+combo+' in a row!');
+}
+function skip(){
+  combo=0;P.starred.push(Q.disp);
+  S.wrong.push({lvl:P.id,disp:Q.disp,ans:Q.ans,steps:Q.steps,trap:Q.trap||'',starred:true,lines:Q.lines||null});
+  save();hud();
+  const fb=document.getElementById('fb');fb.className='fb no';
+  fb.innerHTML=`<b>⭐ Starred.</b> Following the plan, <b>do not read the solution yet</b> — give it one honest attempt
+   tomorrow first. It is saved in your error book.
+   <div class="row"><button class="primary" onclick="P.i++;nextQ()">Next →</button>
+   <button class="ghost" onclick="peek()">I already tried — show me now</button></div>`;
+}
+function peek(){document.getElementById('fb').innerHTML=fbHTML(false,Q)+
+  `<div class="row"><button class="primary" onclick="P.i++;nextQ()">Next →</button></div>`}
+function finish(bossWon){
+  const L=LEVELS[LIDX[P.id]];
+  let st;
+  if(L.boss){ st = bossWon ? (P.lives===3?3:P.lives===2?2:1) : 0; if(bossWon){S.bossWin++} }
+  else { const r=P.right/P.n; st = r>=1?3:r>=.8?2:r>=.6?1:0; }
+  if(st>0){S.pass[P.id]=true;SFX.win();burst(110)} else SFX.lose();
+  S.stars[P.id]=Math.max(S.stars[P.id]||0,st);save();hud();
+  const nxt=LIDX[P.id]+1;
+  document.getElementById('qcard').innerHTML=`
+   <h2 style="margin-top:0">${L.boss?(bossWon?'👑 Boss defeated':'💀 The boss wins this time'):
+     st===3?'💎 Perfect clear':st>0?'🎉 Level cleared':'Run it again'}</h2>
+   <div style="font-size:1.875rem;letter-spacing:6px;color:var(--gold)">${'★'.repeat(st)}${'☆'.repeat(3-st)}</div>
+   <p>${L.boss?(bossWon?`You finished with ${P.lives} heart${P.lives===1?'':'s'}. Three hearts means a perfect clear.`
+      :'The boss does not get stronger — you do. Read the error book and come back.')
+      :`<b>${P.right}</b> of ${P.n} correct${P.starred.length?`, ${P.starred.length} starred`:''}.`}
+   ${st===0&&!L.boss?' Under 60% — read the concept again, then retry.':''}</p>
+   <div class="row"><button onclick="viewPlay('${P.id}')">Retry</button>
+     ${st>0&&nxt<LEVELS.length?`<button class="primary" onclick="go('play','${LEVELS[nxt].id}')">Next: ${LEVELS[nxt].nm} →</button>`:''}
+     ${nxt>=LEVELS.length?`<button class="primary" onclick="go('summary')">Write today's summary →</button>`:''}
+     <button class="ghost" onclick="go('')">Back to map</button></div>`;
+}
+
+/* ===================== NUMBER FORGE ===================== */
+let F={};
+function forgeStart(){
+  F={solved:0,need:3,target:24,hand:[],sol:'',hints:0};
+  app.innerHTML=`<div class="row"><button class="ghost" onclick="go('')">← Back to map</button></div>
+   <h1>🎴 Number Forge</h1><p class="sub">Make the target · ${LEVELS[LIDX.forge].mins} min</p>
+   <div class="card quiet">${LEVELS[LIDX.forge].intro}</div><div class="card" id="qcard"></div>`;
+  forgeDeal();
+}
+function forgeDeal(){
+  F.target = F.solved>=2 ? pick([24,36,48]) : 24;
+  const d=deal24(F.target); F.hand=d.hand; F.sol=d.sol; F.hints=0;
+  document.getElementById('qcard').innerHTML=`
+   <div class="pbar"><i style="width:${F.solved/F.need*100}%"></i></div>
+   <div class="qsub">Hand ${F.solved+1} of ${F.need} · every hand dealt here is solvable — the page checked before dealing it</div>
+   <h2 style="margin:10px 0 0">Target: <span class="hl">${F.target}</span></h2>
+   <div class="hand">${F.hand.map(n=>`<div class="pcard">${n}</div>`).join('')}</div>
+   <div class="row"><input type="text" ${RO()} id="expr" placeholder="e.g.  (6 - 4) * 3 * 4" autocomplete="off"></div>
+   <div class="keys">
+     ${F.hand.map(n=>`<button onclick="key('${n}')">${n}</button>`).join('')}
+     <button onclick="key('+')">+</button><button onclick="key('-')">−</button>
+     <button onclick="key('*')">×</button><button onclick="key('/')">÷</button>
+     <button onclick="key('(')">(</button><button onclick="key(')')">)</button>
+     <button class="ghost" onclick="back()">⌫</button><button class="ghost" onclick="clr()">clear</button>
+   </div>
+   <div class="row"><button class="primary" onclick="forgeCheck()">Check it</button>
+     <button class="ghost" onclick="forgeHint()">Hint</button>
+     <button class="ghost" onclick="forgeGiveUp()">Show a solution</button></div>
+   <div class="fb" id="fb"></div>`;
+  const el=document.getElementById('expr'); el.focus(); el.onkeydown=e=>{if(e.key==='Enter')forgeCheck()};
+}
+function key(c){const e=document.getElementById('expr');e.value+=c;e.focus()}
+function back(){const e=document.getElementById('expr');e.value=e.value.slice(0,-1);e.focus()}
+function clr(){const e=document.getElementById('expr');e.value='';e.focus()}
+function forgeCheck(){
+  const r=checkExpr(document.getElementById('expr').value,F.hand,F.target);
+  const fb=document.getElementById('fb');
+  if(r.ok){
+    F.solved++;S.forge++;S.seen++;S.right++;combo++;S.best=Math.max(S.best,combo);
+    S.xp+=Math.max(10,40-F.hints*12);save();hud();SFX.win();burst(90);
+    fb.className='fb ok';
+    fb.innerHTML=`<b>✅ That works.</b> ${F.hints?'(with a hint)':'No hints — the hard way.'}
+      <p>Yours is one of several. The page also found: <span class="mono">${F.sol}</span></p>
+      <div class="row"><button class="primary" onclick="${F.solved>=F.need?'forgeEnd()':'forgeDeal()'}">${
+        F.solved>=F.need?'Finish the level →':'Next hand →'}</button></div>`;
+  }else{
+    SFX.no();shake('#qcard');fb.className='fb no';
+    fb.innerHTML=`<b>Not yet.</b> ${r.msg}
+     <p class="sub">Remember: brackets change which operation goes first. That is usually where the answer is hiding.</p>`;
+  }
+}
+function forgeHint(){
+  F.hints++; const fb=document.getElementById('fb'); fb.className='fb no';
+  const first=F.sol.replace(/^\(/,'').split(' ').slice(0,3).join(' ');
+  fb.innerHTML=`<b>Hint ${F.hints}.</b> ${F.hints===1
+    ? 'Look for two cards that make a useful number first — often '+(F.target/2)+', '+(F.target/3)+' or '+(F.target/4)+'.'
+    : 'One solution starts by combining <span class="mono hl">'+first+'</span>.'}
+   <p class="sub">Hints cost XP, not pride.</p>`;
+}
+function forgeGiveUp(){
+  const fb=document.getElementById('fb'); fb.className='fb no'; SFX.lose();
+  fb.innerHTML=`<b>One solution:</b> <span class="mono hl">${F.sol} = ${F.target}</span>
+   <p>Cover it up and rebuild it yourself before moving on — that is what turns a shown answer into a learned one.</p>
+   <div class="row"><button class="primary" onclick="forgeDeal()">New hand →</button></div>`;
+}
+function forgeEnd(){
+  const st=F.hints===0?3:F.hints<=2?2:1;
+  S.pass.forge=true;S.stars.forge=Math.max(S.stars.forge||0,st);save();hud();SFX.win();burst(120);
+  document.getElementById('qcard').innerHTML=`<h2 style="margin-top:0">🎴 Forge cleared</h2>
+   <div style="font-size:1.875rem;letter-spacing:6px;color:var(--gold)">${'★'.repeat(st)}${'☆'.repeat(3-st)}</div>
+   <p>Three hands built. Every one of them was a parentheses puzzle in disguise.</p>
+   <div class="row"><button onclick="forgeStart()">Play again</button>
+   <button class="primary" onclick="go('play','duel')">Next: Countdown Duel →</button>
+   <button class="ghost" onclick="go('')">Back to map</button></div>`;
+}
+
+/* ===================== COUNTDOWN DUEL ===================== */
+const RIVALS=[{n:'Tortoise',e:'🐢',lo:11,hi:19},{n:'Fox',e:'🦊',lo:7,hi:13},{n:'Circuit',e:'🤖',lo:4.5,hi:8}];
+const TAUNT=['Too slow!','Got there first.','Buzz.','That one was easy.','My turn again.'];
+let D={};
+function duelStart(){
+  app.innerHTML=`<div class="row"><button class="ghost" onclick="go('')">← Back to map</button></div>
+   <h1>⚔️ Countdown Duel</h1><p class="sub">First to 5 · pick your rival</p>
+   <div class="card quiet">${LEVELS[LIDX.duel].intro}</div>
+   <div class="card"><h3>Who are you racing?</h3><div class="row">
+     ${RIVALS.map((r,i)=>`<button onclick="duelGo(${i})">${r.e} ${r.n} <span class="sub">· buzzes in ${r.lo}–${r.hi}s</span></button>`).join('')}
+   </div></div>`;
+}
+function duelGo(i){
+  D={r:RIVALS[i],me:0,them:0,over:false};
+  app.innerHTML=`<div class="row"><button class="ghost" onclick="go('')">← Quit duel</button></div>
+   <h1>⚔️ You vs ${D.r.e} ${D.r.n}</h1><div class="card" id="qcard"></div>`;
+  duelQ();
+}
+function duelQ(){
+  if(D.me>=5||D.them>=5)return duelEnd();
+  Q=GEN[pick(['warm','x11','sq5','mirror','dist'])]();
+  const ms=(D.r.lo+Math.random()*(D.r.hi-D.r.lo))*1000, t0=Date.now();
+  document.getElementById('qcard').innerHTML=`
+   <div class="duel"><div><div class="who">🙂</div><div class="sc" id="me">${D.me}</div><div class="qsub">you</div></div>
+     <div class="qsub">first to 5</div>
+     <div><div class="who">${D.r.e}</div><div class="sc" id="them">${D.them}</div><div class="qsub">${D.r.n}</div></div></div>
+   <div class="buzz"><i id="bz"></i></div>
+   <div class="q">${Q.disp}</div>
+   <div class="row"><input type="text" ${RO()} id="ans" inputmode="decimal" autocomplete="off" placeholder="buzz in">
+     <button class="primary" onclick="duelAns()">Buzz!</button></div>
+   <div class="fb" id="fb"></div>`;
+  const el=document.getElementById('ans');el.focus();el.onkeydown=e=>{if(e.key==='Enter')duelAns()};
+  if(duelTimer)clearInterval(duelTimer);
+  duelTimer=setInterval(()=>{
+    const left=1-(Date.now()-t0)/ms, b=document.getElementById('bz');
+    if(!b){clearInterval(duelTimer);return}
+    b.style.width=Math.max(0,left*100)+'%';
+    if(left<=0){clearInterval(duelTimer);duelTimer=null;rivalBuzz()}
+  },80);
+}
+function rivalBuzz(){
+  D.them++;combo=0;SFX.buzz();shake('#qcard');
+  S.wrong.push({lvl:'duel',disp:Q.disp,ans:Q.ans,steps:Q.steps,trap:Q.trap||''});save();hud();
+  const fb=document.getElementById('fb');fb.className='fb no';
+  document.getElementById('them').textContent=D.them;
+  fb.innerHTML=`<b>${D.r.e} buzzes first.</b> “${pick(TAUNT)}” — the answer was <span class="hl">${Q.ans}</span>.
+   <ol>${Q.steps.map(s=>`<li>${s}</li>`).join('')}</ol>
+   <div class="row"><button class="primary" onclick="duelQ()">Next question →</button></div>`;
+}
+function duelAns(){
+  const v=num(document.getElementById('ans').value); if(isNaN(v))return;
+  if(duelTimer){clearInterval(duelTimer);duelTimer=null}
+  const ok=Math.abs(v-Q.ans)<1e-9; S.seen++;
+  const fb=document.getElementById('fb');
+  if(ok){D.me++;S.right++;combo++;S.best=Math.max(S.best,combo);S.xp+=14;SFX.ok(combo);burst(22,innerWidth/2,210);
+    document.getElementById('me').textContent=D.me;
+    fb.className='fb ok';
+    fb.innerHTML=`<b>✅ You beat the buzzer.</b> ${D.me}–${D.them}.
+     <div class="row"><button class="primary" onclick="duelQ()">Next question →</button></div>`;
+  }else{D.them++;combo=0;SFX.no();shake('#qcard');
+    S.wrong.push({lvl:'duel',disp:Q.disp,ans:Q.ans,steps:Q.steps,trap:Q.trap||''});
+    document.getElementById('them').textContent=D.them;
+    fb.className='fb no';
+    fb.innerHTML=`<b>❌ Wrong buzz — the point goes to ${D.r.n}.</b> The answer was <span class="hl">${Q.ans}</span>.
+     <ol>${Q.steps.map(s=>`<li>${s}</li>`).join('')}</ol>
+     <p class="sub">Under a buzzer, read twice and compute once. Most speed-round errors are reading errors.</p>
+     <div class="row"><button class="primary" onclick="duelQ()">Next question →</button></div>`;}
+  save();hud();
+}
+function duelEnd(){
+  const won=D.me>=5;
+  if(won){S.duelW++;S.pass.duel=true;S.stars.duel=Math.max(S.stars.duel||0,D.them<=1?3:D.them<=3?2:1);
+    SFX.win();burst(130)}else SFX.lose();
+  save();hud();
+  document.getElementById('qcard').innerHTML=`<h2 style="margin-top:0">${won?'🏆 You win the duel':'😤 '+D.r.n+' takes it'}</h2>
+   <div class="q">${D.me} – ${D.them}</div>
+   <p>${won?'Speed is a separate skill from maths, and you just practised it.'
+     :'Rematch, or drop to a slower rival. Losing a buzzer race is not the same as not knowing the maths.'}</p>
+   <div class="row"><button onclick="duelStart()">Choose a rival again</button>
+   ${won?`<button class="primary" onclick="go('play','boss')">Next: Boss Battle →</button>`:''}
+   <button class="ghost" onclick="go('')">Back to map</button></div>`;
+}
+
+/* ===================== ENDLESS PRACTICE (with wager) ===================== */
+let GQ=null,GN={n:0,r:0},wager=false;
+function viewGym(key){
+  key=key||'x11';
+  app.innerHTML=`<div class="row"><button class="ghost" onclick="go('')">← Back to map</button></div>
+  <h1>♾️ Endless practice</h1><p class="sub">As many as you want. No stars here — just the streak.</p>
+  <div class="row">${[['warm','Warm-up'],['x11','× 11'],['sq5','Squares in 5'],['mirror','Mirror pairs'],
+    ['dist','Round number'],['trap','Spot the Mistake']]
+    .map(k=>`<button class="${k[0]===key?'primary':''}" onclick="GN={n:0,r:0};go('gym','${k[0]}')">${k[1]}</button>`).join('')}</div>
+  <div class="card" id="gcard"></div>`;
+  gymQ(key);
+}
+function gymQ(key){
+  GQ=GEN[key]();wager=false;
+  document.getElementById('gcard').innerHTML=`
+   <div class="qsub">${GN.r} of ${GN.n} this round ${combo>1?`· <span class="combo">🔥 ${combo}</span>`:''}</div>
+   <div class="q ${GQ.word?'word':''}">${GQ.disp}</div>
+   ${GQ.lines?`<ol class="mono" style="margin:10px 0 0 20px;font-size:1.0625rem">${GQ.lines.map(l=>`<li style="margin:5px 0">${l}</li>`).join('')}</ol>`:''}
+   <div class="row"><input type="text" ${RO()} id="gans" inputmode="decimal" autocomplete="off" placeholder="${GQ.lines?'step number':'answer'}">
+     <button class="primary" onclick="gymAns('${key}')">Submit</button>
+     <button class="ghost" id="wg" onclick="setWager()">🎲 Double or nothing</button>
+     <button class="ghost" onclick="gymQ('${key}')">Different problem</button></div>
+   <div class="fb" id="gfb"></div>`;
+  const el=document.getElementById('gans');el.focus();el.onkeydown=e=>{if(e.key==='Enter')gymAns(key)};
+}
+function setWager(){wager=!wager;const b=document.getElementById('wg');
+  b.className=wager?'primary':'ghost';b.textContent=wager?'🎲 Wagered!':'🎲 Double or nothing';
+  if(wager)tone(660,.09,'triangle',.14)}
+function gymAns(key){
+  const v=num(document.getElementById('gans').value);if(isNaN(v))return;
+  const ok=Math.abs(v-GQ.ans)<1e-9;GN.n++;S.seen++;
+  const base=6,pts=wager?base*2:base;
+  if(ok){GN.r++;S.right++;combo++;S.best=Math.max(S.best,combo);S.xp+=pts;SFX.ok(combo);if(wager)burst(30)}
+  else{combo=0;S.xp=Math.max(0,S.xp-(wager?base*2:0));SFX.no();shake('#gcard');
+    S.wrong.push({lvl:key,disp:GQ.disp,ans:GQ.lines?'step '+GQ.ans:GQ.ans,steps:GQ.steps,trap:GQ.trap||'',lines:GQ.lines||null})}
+  save();hud();
+  const fb=document.getElementById('gfb');fb.className='fb '+(ok?'ok':'no');
+  fb.innerHTML=(wager?`<b>🎲 ${ok?'+'+pts+' XP':'−'+pts+' XP'}</b><br>`:'')+fbHTML(ok,GQ)+
+    `<div class="row"><button class="primary" onclick="gymQ('${key}')">Another →</button></div>`;
+}
+
+/* ===================== ERROR BOOK + REMATCH ===================== */
+function viewWrong(){
+  const nm=Object.fromEntries(LEVELS.map(l=>[l.id,l.nm]));
+  app.innerHTML=`<div class="row"><button class="ghost" onclick="go('')">← Back to map</button>
+   ${S.wrong.length?`<button class="primary" onclick="rematch()">⚔️ Rematch all (${S.wrong.length})</button>`:''}</div>
+  <h1>📕 Error book</h1>
+  <p class="sub">Not a punishment — a map. It tells you what to practise tomorrow.</p>
+  ${S.wrong.length===0?'<div class="card quiet">Nothing here yet. Play a level and come back.</div>':
+   S.wrong.map(w=>`<div class="card"><span class="badge">${nm[w.lvl]||w.lvl}</span>
+    ${w.starred?'<span class="badge got">⭐ starred</span>':''}
+    <div class="q word">${w.disp}</div>
+    ${w.lines?`<ol class="mono" style="margin:6px 0 0 20px">${w.lines.map(l=>`<li>${l}</li>`).join('')}</ol>`:''}
+    <p>Correct answer: <span class="hl">${w.ans}</span></p>
+    <details><summary style="cursor:pointer;color:var(--accent2)">Show the solution</summary>
+      <ol>${w.steps.map(s=>`<li>${s}</li>`).join('')}</ol>
+      ${w.trap?`<p style="color:var(--warn)">⚠️ ${w.trap}</p>`:''}</details></div>`).join('')}
+  ${S.wrong.length?`<div class="row"><button onclick="S.wrong=[];save();render()">Clear the error book</button>
+   <button class="primary" onclick="go('summary')">Write today's summary →</button></div>`:''}`;
+}
+let R={};
+function rematch(){
+  R={pool:S.wrong.slice(),i:0,right:0};
+  app.innerHTML=`<div class="row"><button class="ghost" onclick="go('wrong')">← Back to the error book</button></div>
+   <h1>⚔️ Rematch</h1><p class="sub">Every problem that beat you today, one more time.</p>
+   <div class="card" id="rcard"></div>`;
+  rQ();
+}
+function rQ(){
+  if(R.i>=R.pool.length){
+    document.getElementById('rcard').innerHTML=`<h2 style="margin-top:0">${R.right===R.pool.length?'🏆 Clean sweep':'Rematch done'}</h2>
+     <p>You got <b>${R.right}</b> of ${R.pool.length} this time.
+     ${R.right===R.pool.length?'Every problem that beat you today has now lost. That is what the error book is for.':
+      'The ones still standing are tomorrow\u2019s warm-up.'}</p>
+     <div class="row"><button class="primary" onclick="go('summary')">Write today's summary →</button>
+     <button class="ghost" onclick="go('')">Back to map</button></div>`;
+    if(R.right===R.pool.length){SFX.win();burst(130)}
+    return;
+  }
+  const w=R.pool[R.i];
+  document.getElementById('rcard').innerHTML=`
+   <div class="pbar"><i style="width:${R.i/R.pool.length*100}%"></i></div>
+   <div class="qsub">Rematch ${R.i+1} of ${R.pool.length}</div>
+   <div class="q word">${w.disp}</div>
+   ${w.lines?`<ol class="mono" style="margin:8px 0 0 20px">${w.lines.map(l=>`<li>${l}</li>`).join('')}</ol>`:''}
+   <div class="row"><input type="text" ${RO()} id="rans" autocomplete="off" placeholder="answer">
+     <button class="primary" onclick="rAns()">Submit</button></div>
+   <div class="fb" id="rfb"></div>`;
+  const el=document.getElementById('rans');el.focus();el.onkeydown=e=>{if(e.key==='Enter')rAns()};
+}
+function rAns(){
+  const w=R.pool[R.i], raw=(document.getElementById('rans').value||'').trim().toLowerCase().replace(/^step\s*/,'');
+  const want=String(w.ans).toLowerCase().replace(/^step\s*/,'');
+  const ok = raw===want || (!isNaN(num(raw))&&!isNaN(num(want))&&Math.abs(num(raw)-num(want))<1e-9);
+  const fb=document.getElementById('rfb');
+  if(ok){R.right++;S.xp+=16;combo++;SFX.ok(combo);burst(24,innerWidth/2,220)}else{combo=0;SFX.no();shake('#rcard')}
+  save();hud();
+  fb.className='fb '+(ok?'ok':'no');
+  fb.innerHTML=`<b>${ok?'✅ Beaten. Revenge taken.':'❌ Still standing — answer: '+w.ans}</b>
+   <ol>${w.steps.map(s=>`<li>${s}</li>`).join('')}</ol>
+   <div class="row"><button class="primary" onclick="R.i++;rQ()">Next →</button></div>`;
+}
+
+/* ===================== SUMMARY ===================== */
+function viewSummary(){
+  const byLvl={};S.wrong.forEach(w=>byLvl[w.lvl]=(byLvl[w.lvl]||0)+1);
+  const nm=Object.fromEntries(LEVELS.map(l=>[l.id,l.nm]));
+  const weak=Object.entries(byLvl).sort((a,b)=>b[1]-a[1]).slice(0,2).map(e=>nm[e[0]]||e[0]);
+  app.innerHTML=`<div class="row"><button class="ghost" onclick="go('')">← Back to map</button>
+   <button onclick="window.print()">🖨️ Print this page</button></div>
+  <h1>✍️ Today's summary · 5 minutes</h1>
+  <p class="sub">The part everyone skips, and the part that works. Write it <b>by hand</b>.</p>
+  <div class="card"><h3>Today's numbers</h3>
+   <table><tr><th>Attempted</th><th>Correct</th><th>Accuracy</th><th>Best streak</th><th>Error book</th><th>Rank</th></tr>
+   <tr><td>${S.seen}</td><td>${S.right}</td><td>${S.seen?Math.round(S.right/S.seen*100):0}%</td>
+   <td>${S.best}</td><td>${S.wrong.length}</td><td>${rankOf(S.xp)}</td></tr></table>
+   ${weak.length?`<p style="margin-top:12px">Most misses came from: <span class="hl">${weak.join(' and ')}</span>.
+     Put those into tomorrow's warm-up.</p>`:''}</div>
+  <div class="card"><h3>Write three things in the error book</h3>
+   <p><b>1. Today's idea in my own words.</b><br>
+   <span class="sub">Prompt (write your own): all four shortcuts are the same law in disguise. Which law, and what does it say?</span></p>
+   <p><b>2. One mistake, and why.</b> Sort it:<br>
+   <span class="badge">careless (knew it, slipped)</span><span class="badge">method missing</span>
+   <span class="badge">stuck (knew the pieces)</span><span class="badge">never seen before</span><br>
+   <span class="sub">Drive the <b>careless</b> count to zero first — it is the cheapest 3 to 5 points on any paper.</span></p>
+   <p><b>3. One starred problem</b>, with the date three days from now beside it: <span class="hl">October 17</span>.</p></div>
+  <div class="card quiet">Then close the book, even if you want to keep going. <b>Wanting to keep going is a good sign</b> — save it for tomorrow.<br>
+   Day 4: how to read a contest problem — the four steps, naming the unknown, underlining the question.</div>`;
+}
+
+
+/* ---------- iPad: on-screen keypad so the system keyboard never covers the question ---------- */
+const COARSE=matchMedia('(pointer:coarse)').matches;
+if(S.pad===undefined){S.pad=COARSE;save()}
+const RO=()=>S.pad?'readonly':'';
+let curIn=null;
+const PAD=document.createElement('div');PAD.className='pad';document.body.appendChild(PAD);
+PAD.innerHTML=['7','8','9','4','5','6','1','2','3','0','.','⌫']
+  .map(k=>`<button onpointerdown="event.preventDefault();padKey('${k}')">${k}</button>`).join('')
+  +`<button class="go" onpointerdown="event.preventDefault();padGo()">Enter ⏎</button>`;
+function padKey(k){if(!curIn)return;
+  curIn.value = k==='⌫' ? curIn.value.slice(0,-1) : curIn.value+k;
+  tone(720,.035,'triangle',.07);}
+function padGo(){if(curIn&&curIn.onkeydown)curIn.onkeydown({key:'Enter'})}
+function showPad(on){PAD.classList.toggle('show',!!on);document.body.classList.toggle('padon',!!on)}
+document.addEventListener('focusin',e=>{
+  const el=e.target;
+  if(el.tagName!=='INPUT')return;
+  curIn=el;
+  showPad(S.pad && el.id!=='expr');            // the Forge has its own card+operator keys
+  setTimeout(()=>el.scrollIntoView({block:'center',behavior:'smooth'}),60);
+});
+document.addEventListener('focusout',()=>setTimeout(()=>{
+  if(!document.querySelector('input:focus'))showPad(false)},120));
+function togglePad(){S.pad=!S.pad;save();
+  const b=document.getElementById('padbtn');if(b)b.textContent=S.pad?'⌨︎ Pad':'⌨︎ Type';
+  document.querySelectorAll('input[type=text]').forEach(i=>i.readOnly=S.pad);
+  showPad(S.pad&&!!document.querySelector('input:focus'));}
+if('serviceWorker' in navigator && location.protocol.indexOf('http')===0)
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+
+{const b=document.getElementById('padbtn');if(b)b.textContent=S.pad?'⌨︎ Pad':'⌨︎ Type'}
+applyFs();hud();render();
+</script>
+</body>
+</html>
