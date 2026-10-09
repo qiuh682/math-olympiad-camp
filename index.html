@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Math Olympiad Camp</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Math Camp">
+<meta name="theme-color" content="#0f1420">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+:root{--bg:#0f1420;--panel:#182134;--panel2:#1f2b42;--line:#2c3a56;--ink:#e8edf7;
+  --dim:#9fb0cc;--accent:#4cc3a5;--accent2:#5aa9f0;--gold:#f5cc4d;--purple:#a98bdc}
+html{font-size:18px}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);line-height:1.6;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+  padding-bottom:env(safe-area-inset-bottom);-webkit-text-size-adjust:100%}
+.wrap{max-width:min(96vw,49rem);margin:0 auto;padding:1.2rem}
+.hero{display:flex;align-items:center;gap:.9rem;margin:.5rem 0 .2rem}
+.hero img{width:3.4rem;height:3.4rem;border-radius:1rem}
+h1{font-size:1.5rem;margin:0}
+.sub{color:var(--dim);font-size:.82rem;margin:.1rem 0 0}
+h2{font-size:1.05rem;margin:1.6rem 0 .5rem}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:1rem 1.1rem;margin:.7rem 0}
+.card.quiet{background:var(--panel2)}
+.days{display:grid;gap:.7rem;grid-template-columns:repeat(auto-fill,minmax(14rem,1fr))}
+a.day{display:block;text-decoration:none;color:inherit;background:var(--panel);
+  border:1px solid var(--line);border-radius:14px;padding:1rem;transition:.15s;
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+a.day:hover{border-color:var(--accent);transform:translateY(-2px)}
+a.day.soon{opacity:.42;pointer-events:none}
+.dn{font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;color:var(--dim)}
+.dt{font-weight:650;margin-top:.15rem;font-size:1.02rem}
+.dd{color:var(--dim);font-size:.8rem;margin-top:.15rem}
+.st{margin-top:.5rem;color:var(--gold);letter-spacing:2px;font-size:.9rem}
+ol,ul{margin:.4rem 0 0 1.1rem;padding:0}
+li{margin:.3rem 0}
+.kbd{display:inline-block;padding:0 .4rem;border:1px solid var(--line);border-radius:5px;
+  background:var(--panel2);font-size:.85rem}
+.hl{color:var(--gold);font-weight:650}
+footer{color:var(--dim);font-size:.72rem;text-align:center;padding:2rem 1rem 3rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero"><img src="icon-192.png" alt="">
+    <div><h1>Math Olympiad Camp</h1>
+    <p class="sub">One hour a day · Week 1 · Block A: Foundations &amp; habits</p></div></div>
+
+  <div class="card quiet">
+    <b>The hour:</b> 10 min warm-up → 20 min learning the concept → 25 min practice → 5 min error book.
+    Mon–Thu are new topics, Friday is timed mixed review, Saturday is a full past paper, Sunday is off.
+  </div>
+
+  <h2>Days</h2>
+  <div class="days" id="days"></div>
+
+  <h2>Put it on the iPad</h2>
+  <div class="card">
+    <ol>
+      <li>Open this page in <b>Safari</b> on the iPad (it must be Safari — Chrome on iOS cannot install).</li>
+      <li>Tap the <span class="kbd">Share</span> button, then <b>Add to Home Screen</b>.</li>
+      <li>It appears as an app icon. Opening it gives a full screen with no browser bars.</li>
+    </ol>
+    <p class="sub" style="margin-top:.7rem">After the first visit everything is cached, so it works on a plane,
+    in the car, and with wifi off. Progress is stored on the iPad itself — nothing is uploaded anywhere,
+    and there are no accounts, ads or trackers.</p>
+  </div>
+
+  <h2>While you play</h2>
+  <div class="card quiet">
+    <ul>
+      <li><span class="kbd">⌨︎ Pad</span> in the header switches between the built-in number pad and the
+      iPad keyboard. The built-in pad keeps the keyboard from covering the question.</li>
+      <li><span class="kbd">A−</span> <span class="kbd">A+</span> <span class="kbd">⤢ Fit</span> resize
+      everything; <span class="kbd">⤢ Fit</span> makes the text fill the screen you are on.</li>
+      <li><span class="kbd">🔊</span> mutes the sounds — useful in a classroom or a car.</li>
+    </ul>
+  </div>
+
+  <h2>Reset</h2>
+  <div class="card quiet">
+    Each day keeps its own progress. <button onclick="wipe()" style="font:inherit;cursor:pointer;
+    background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:10px;
+    padding:.45rem .8rem">Erase every day's progress</button>
+  </div>
+</div>
+<footer>Runs entirely on this device · no account, no network, no tracking</footer>
+
+<script>
+const DAYS=[
+ {n:1,file:'day01_game.html',key:'mathcamp_day1_v2',date:'Mon · Oct 12',
+  title:'Order of Operations',desc:'PEMDAS properly · compensation · splitting'},
+ {n:2,file:'day02_game.html',key:'mathcamp_day2_v1',date:'Tue · Oct 13',
+  title:'Place Value &amp; Estimation',desc:'price tags · compatible numbers · pairing'},
+ {n:3,date:'Wed · Oct 14',title:'Multiplication Shortcuts',desc:'×11 · ×25 · squares ending in 5'},
+ {n:4,date:'Thu · Oct 15',title:'Reading a Problem',desc:'the four steps · naming the unknown'},
+ {n:5,date:'Fri · Oct 16',title:'Mixed Review',desc:'timed set from everything so far'},
+ {n:6,date:'Sat · Oct 17',title:'Contest Simulation',desc:'a full past paper, real timing'}
+];
+function stars(key){
+  try{const s=JSON.parse(localStorage.getItem(key)||'{}');
+    const t=Object.values(s.stars||{}).reduce((a,b)=>a+b,0);
+    return {t,max:(Object.keys(s.stars||{}).length?24:0),xp:s.xp||0};
+  }catch(e){return {t:0,max:0,xp:0}}
+}
+document.getElementById('days').innerHTML=DAYS.map(d=>{
+  if(!d.file) return `<a class="day soon"><div class="dn">Day ${d.n} · ${d.date}</div>
+    <div class="dt">${d.title}</div><div class="dd">${d.desc}</div>
+    <div class="st" style="color:var(--dim)">coming next</div></a>`;
+  const s=stars(d.key);
+  return `<a class="day" href="${d.file}"><div class="dn">Day ${d.n} · ${d.date}</div>
+    <div class="dt">${d.title}</div><div class="dd">${d.desc}</div>
+    <div class="st">${s.xp?('⭐ '+s.t+' stars · '+s.xp+' XP'):'not started'}</div></a>`;
+}).join('');
+function wipe(){
+  if(!confirm("Erase progress, stars and error books for every day?"))return;
+  DAYS.filter(d=>d.key).forEach(d=>localStorage.removeItem(d.key));
+  location.reload();
+}
+if('serviceWorker' in navigator && location.protocol.indexOf('http')===0)
+  navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
+</html>
