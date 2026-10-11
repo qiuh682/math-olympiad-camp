@@ -1,6 +1,6 @@
 // Offline cache. Bump CACHE when any file changes.
-const CACHE='mathcamp-v2';
-const FILES=['./','./index.html','./day01_game.html','./day02_game.html','./day03_game.html',
+const CACHE='mathcamp-v3';
+const FILES=['./','./index.html','./day01_game.html','./day02_game.html','./day03_game.html','./day04_game.html',
   './manifest.webmanifest','./icon-192.png','./icon-512.png','./apple-touch-icon.png'];
 self.addEventListener('install',e=>{
   e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES)).then(()=>self.skipWaiting()));
