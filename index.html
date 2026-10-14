@@ -49,7 +49,7 @@ footer{color:var(--dim);font-size:.72rem;text-align:center;padding:2rem 1rem 3re
 <div class="wrap">
   <div class="hero"><img src="{{artifact:art_ed31ff39-47d0-4b24-bbaa-4c950269cf99}}" alt="">
     <div><h1>Math Olympiad Camp</h1>
-    <p class="sub">One hour a day · Week 1 complete · Block A: Foundations &amp; habits</p></div></div>
+    <p class="sub">One hour a day · Week 2 · Block A: Foundations &amp; habits</p></div></div>
 
   <div class="card quiet">
     <b>The hour:</b> 10 min warm-up → 20 min learning the concept → 25 min practice → 5 min error book.
@@ -104,7 +104,14 @@ const DAYS=[
  {n:5,file:'day05_game.html',key:'mathcamp_day5_v1',date:'Fri · Oct 16',
   title:'Mixed Review',desc:'week rematch · 12-problem timed set · sort the misses'},
  {n:6,file:'day06_game.html',key:'mathcamp_day6_v1',date:'Sat · Oct 17',
-  title:'Contest Simulation',desc:'MOEMS-E style paper · write-up · week 1 report'}
+  title:'Contest Simulation',desc:'MOEMS-E style paper · write-up · week 1 report'},
+ {n:7,file:'day07_game.html',key:'mathcamp_day7_v1',date:'Mon · Oct 19',
+  title:'Fractions, Decimals &amp; Percents',desc:'the conversion family · per hundred · comparing'},
+ {n:8,date:'Tue · Oct 20',title:'Adding &amp; Subtracting Fractions',desc:'least common denominator'},
+ {n:9,date:'Wed · Oct 21',title:'Multiplying &amp; Dividing Fractions',desc:'what "of" means'},
+ {n:10,date:'Thu · Oct 22',title:'Fraction Word Problems',desc:'bar models'},
+ {n:11,date:'Fri · Oct 23',title:'Mixed Review',desc:'timed set from Weeks 1–2'},
+ {n:12,date:'Sat · Oct 24',title:'Contest Simulation',desc:'MOEMS-E style paper, timed'}
 ];
 function stars(key){
   try{const s=JSON.parse(localStorage.getItem(key)||'{}');
