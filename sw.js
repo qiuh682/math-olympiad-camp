@@ -1,5 +1,5 @@
 // Offline cache. Bump CACHE when any file changes.
-const CACHE='mathcamp-v5';
+const CACHE='mathcamp-v6';
 const FILES=['./','./index.html','./day01_game.html','./day02_game.html','./day03_game.html','./day04_game.html','./day05_game.html','./day06_game.html',
   './manifest.webmanifest','./icon-192.png','./icon-512.png','./apple-touch-icon.png'];
 self.addEventListener('install',e=>{
