@@ -859,7 +859,7 @@ const CARDS=[
  {id:'claim',n:'Claim · Reason · Check',t:'A complete solution has all three. Most student write-ups have only the middle one.',
   eg:'"The area is 48 cm²." … steps … "Check: 2(8+6) = 28 ✓"',how:'Complete the Write-up',got:s=>s.pass.writeup},
  {id:'aloud',n:'Read It Aloud',t:'Anywhere the listener asks "wait, why?" is a gap in the argument. Rewrite that part.',
-  eg:'The gap is usually a step you thought was obvious.',how:'Tick "read aloud" in the Write-up',got:s=>s.writeup&&s.writeup.aloud},
+  eg:'The gap is usually a step you thought was obvious.',how:'Tick "read aloud" in the Write-up',got:s=>s.writeups&&Object.values(s.writeups).some(w=>w.aloud)},
  {id:'untimed',n:'Under Thirty',t:'Finished the paper inside the 30 minutes a real olympiad allows — with nothing enforcing it.',
   eg:'Next week the clock is real.',how:'Finish the paper in under 30:00',got:s=>s.exam&&s.exam.lvl==='paper'&&s.exam.left>0},
  {id:'cleanpaper',n:'Clean Paper',t:'Five for five on a contest paper.',eg:'',how:'Score 5/5',got:s=>s.exam&&s.exam.lvl==='paper'&&s.exam.score>=5},
@@ -1512,30 +1512,37 @@ function paperStart(){
 }
 
 /* ===================== WRITE-UP ===================== */
+function wuBlank(){return {text:'',claim:false,reason:false,check:false,aloud:false}}
+function wuCur(){   // one write-up per problem, kept separately
+  if(!S.writeups){S.writeups={};
+    if(S.writeup&&S.writeup.idx!=null){S.writeups[S.writeup.idx]=Object.assign(wuBlank(),S.writeup)}}   // migrate old shared box
+  if(S.wuIdx==null){const miss=S.exam&&S.exam.lvl==='paper'?S.exam.items.findIndex(i=>!i.ok):-1;S.wuIdx=miss>=0?miss:4}
+  if(!S.writeups[S.wuIdx])S.writeups[S.wuIdx]=wuBlank();
+  save(); return S.writeups[S.wuIdx];
+}
+function wuWords(t){return (t.trim().match(/\S+/g)||[]).length}
 function writeupStart(){
-  const w=S.writeup||{idx:null,text:'',claim:false,reason:false,check:false,aloud:false};
-  if(w.idx===null){const miss=S.exam&&S.exam.lvl==='paper'?S.exam.items.findIndex(i=>!i.ok):-1;w.idx=miss>=0?miss:4}
-  S.writeup=w;save();
-  const p=PAPER[w.idx], words=(w.text.trim().match(/\S+/g)||[]).length;
+  const w=wuCur(), p=PAPER[S.wuIdx];
+  const done=Object.entries(S.writeups).filter(([k,v])=>wuWords(v.text)>=25).map(([k])=>+k);
   app.innerHTML=`<div class="row"><button class="ghost" onclick="go('')">← Back to map</button>
     <button onclick="window.print()">🖨️ Print</button></div>
-   <h1>✍️ Write-up</h1><p class="sub">One complete solution: claim · reason · check</p>
-   <div class="card quiet">Which problem? <div class="row">${PAPER.map((q,i)=>`<button class="${i===w.idx?'primary':''}" onclick="S.writeup.idx=${i};save();writeupStart()">Problem ${i+1}</button>`).join('')}</div></div>
+   <h1>✍️ Write-up</h1><p class="sub">One complete solution: claim · reason · check. Each problem keeps its own.</p>
+   <div class="card quiet">Which problem? <div class="row">${PAPER.map((q,i)=>`<button class="${i===S.wuIdx?'primary':''}" onclick="S.wuIdx=${i};save();writeupStart()">Problem ${i+1}${done.includes(i)?' ✓':''}</button>`).join('')}</div></div>
    <div class="card"><div class="q word">${p.disp}</div>
     <textarea id="wu" rows="10" style="width:100%;margin-top:.6rem;font:inherit;font-size:1.05rem;line-height:1.5;padding:.7rem;border-radius:10px;border:1px solid var(--line);background:#0c111c;color:var(--ink)"
-      placeholder="The answer is … because … Check: …" oninput="S.writeup.text=this.value;save();document.getElementById('wc').textContent=(this.value.trim().match(/\\S+/g)||[]).length+' words'">${w.text.replace(/</g,'&lt;')}</textarea>
-    <div class="qsub" id="wc">${words} words</div>
+      placeholder="The answer is … because … Check: …" oninput="S.writeups[S.wuIdx].text=this.value;save();document.getElementById('wc').textContent=wuWords(this.value)+' words'">${w.text.replace(/</g,'&lt;')}</textarea>
+    <div class="qsub" id="wc">${wuWords(w.text)} words</div>
     <h3>Does it have all three?</h3>
     ${[['claim','<b>Claim</b> — the answer in a sentence, with its unit'],['reason','<b>Reason</b> — every step in order, nothing left to guess'],
        ['check','<b>Check</b> — one line showing it fits the problem'],['aloud','<b>Read aloud</b> to someone — and rewrote anywhere they asked "why?"']]
-      .map(([k,l])=>`<label style="display:block;margin:.35rem 0;cursor:pointer"><input type="checkbox" ${w[k]?'checked':''} onchange="S.writeup.${k}=this.checked;save();writeupStart()" style="transform:scale(1.3);margin-right:.6rem">${l}</label>`).join('')}
+      .map(([k,l])=>`<label style="display:block;margin:.35rem 0;cursor:pointer"><input type="checkbox" ${w[k]?'checked':''} onchange="S.writeups[S.wuIdx].${k}=this.checked;save();writeupStart()" style="transform:scale(1.3);margin-right:.6rem">${l}</label>`).join('')}
     <div class="row"><button class="primary" onclick="writeupDone()">Done →</button>
       <button class="ghost" onclick="document.getElementById('sol').style.display='block'">Compare with a model solution</button></div>
     <div id="sol" style="display:none;margin-top:.6rem" class="fb ok"><b>One way to write it</b><ol>${p.steps.map(s=>`<li>${s}</li>`).join('')}</ol>
      <p class="sub">Yours does not have to match this. It has to be complete.</p></div></div>`;
 }
 function writeupDone(){
-  const w=S.writeup, words=(w.text.trim().match(/\S+/g)||[]).length, ticks=['claim','reason','check'].filter(k=>w[k]).length;
+  const w=wuCur(), words=wuWords(w.text), ticks=['claim','reason','check'].filter(k=>w[k]).length;
   if(words<25){toastMsg('Write a bit more — at least a few sentences.');return}
   const st=ticks===3&&w.aloud?3:ticks===3?2:1;
   S.pass.writeup=true;S.stars.writeup=Math.max(S.stars.writeup||0,st);S.xp+=40;save();hud();SFX.win();burst(90);
