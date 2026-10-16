@@ -24,6 +24,7 @@ no ads, no tracking. Progress is stored on the device in localStorage.
 | `day05_game.html` | Day 5: mixed review — week rematch from Day 1–4 error books, 25-minute timed set, bucket sorting |
 | `day06_game.html` | Day 6: contest simulation — five original MOEMS-E-style problems, write-up, Week 1 report |
 | `day07_game.html` | Day 7: fraction ↔ decimal ↔ percent family, percent of a number, comparing (fraction input accepted) |
+| `day08_game.html` | Day 8: adding and subtracting fractions — same denominators and why, LCD, subtracting from a whole, mixed numbers |
 | `sw.js` | Service worker — offline caching |
 | `manifest.webmanifest` | Web app manifest — icon, name, standalone display |
 | `icon-*.png`, `apple-touch-icon.png` | App icons |
